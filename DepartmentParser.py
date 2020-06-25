@@ -8,11 +8,10 @@ departmentData = open('/tmp/departmentData.csv', 'w')
 
 csvWriter = csv.writer(departmentData)
 
-data = root.find('pd:departmentPd')
-periodSeqNum = data[0].attrib['periodSeqNum']
-site = data[1].text
+periodSeqNum = root[0].attrib['periodSeqNum']
+site = root[1].text
 periodIndex = periodSeqNum + site
-totals = root.find('totals')
+totals = root[3]
 
 headerPresent = False
 totalHeader = [
@@ -37,12 +36,13 @@ totalHeader = [
     "dp_PercentOfSales",
     "dp_Index"
 ]
+index = 0
 for member in totals.findall('deptInfo'):
     deptInfo = []
     if (headerPresent == False):
         csvWriter.writerow(totalHeader)
         headerPresent = True
-    deptBase = member.find('vs:deptBase')
+    deptBase = member[0]
     sysid = deptBase.attrib['sysid']
     deptType = deptBase.attrib['deptType']
     name = deptBase[0].text
@@ -51,7 +51,7 @@ for member in totals.findall('deptInfo'):
     netSalesCount = netSales[0].text
     netSalesAmount = netSales[1].text
     netSalesItemCount = netSales[2].text
-    netSalesUOM = netSales[2].attrib['uom']
+    netSalesUOM = netSales[2].attrib['uom'] if 'uom' in netSales[2].attrib else "None"
 
     refunds = member.find('refunds')
     refundsCount = refunds[0].text
@@ -91,5 +91,9 @@ for member in totals.findall('deptInfo'):
     deptInfo.append(grossSales)
     deptInfo.append(percentOfSales)
     deptInfo.append(periodIndex)
+
+    csvWriter.writerow(deptInfo)
+    index += 1
+    print(index)
 
 departmentData.close()
