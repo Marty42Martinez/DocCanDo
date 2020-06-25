@@ -10,7 +10,7 @@ csvWriter = csv.writer(departmentData)
 
 periodSeqNum = root[0].attrib['periodSeqNum']
 site = root[1].text
-periodIndex = periodSeqNum + site
+periodIndex = periodSeqNum + "_" + site
 totals = root[3]
 
 headerPresent = False
