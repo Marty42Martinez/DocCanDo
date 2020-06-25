@@ -9,29 +9,87 @@ departmentData = open('/tmp/departmentData.csv', 'w')
 csvWriter = csv.writer(departmentData)
 
 data = root.find('pd:departmentPd')
-periodIndex = data[0].attrib['periodSeqNum'] + data[1].text
+periodSeqNum = data[0].attrib['periodSeqNum']
+site = data[1].text
+periodIndex = periodSeqNum + site
 totals = root.find('totals')
 
-totalCount = 0
-totalHeader = []
+headerPresent = False
+totalHeader = [
+    "dp_periodSeqNum",
+    "dp_site",
+    "dp_Sysid",
+    "dp_deptType",
+    "dp_name",
+    "dp_NetSalesCount",
+    "dp_NetSalesAmount",
+    "dp_NetSalesItemCount",
+    "dp_NetSalesUOM",
+    "dp_RefundsCount",
+    "dp_RefundsAmount",
+    "dp_DiscountsCount",
+    "dp_DiscountsAmount",
+    "dp_PromosCount",
+    "dp_PromosAmount",
+    "dp_ManualDiscountsCount",
+    "dp_ManualDiscountsAmount",
+    "dp_GrossSales",
+    "dp_PercentOfSales",
+    "dp_Index"
+]
 for member in totals.findall('deptInfo'):
     deptInfo = []
-    if totalCount == 0:
-        netSales = member.find('netSales').tag
-        refunds = member.find('refunds').tag
-        discounts = member.find('discounts').tag
-        grossSales = member.find('grossSales').tag
-        percentOfSales = member.find('percentOfSales').tag
-
-        totalHeader.append(netSales)
-        totalHeader.append(refunds)
-        totalHeader.append(discounts)
-        totalHeader.append(grossSales)
-        totalHeader.append(percentOfSales)
-
+    if (headerPresent == False):
         csvWriter.writerow(totalHeader)
-        count += 1
-    netSales = member.find('netSales')[1].text #Amount field
-    deptInfo.append(netSales)
+        headerPresent = True
+    deptBase = member.find('vs:deptBase')
+    sysid = deptBase.attrib['sysid']
+    deptType = deptBase.attrib['deptType']
+    name = deptBase[0].text
+
+    netSales = member.find('netSales')
+    netSalesCount = netSales[0].text
+    netSalesAmount = netSales[1].text
+    netSalesItemCount = netSales[2].text
+    netSalesUOM = netSales[2].attrib['uom']
+
+    refunds = member.find('refunds')
+    refundsCount = refunds[0].text
+    refundsAmount = refunds[1].text
+
+    discounts = member.find('discounts')
+    discountsCount = discounts[0][0].text
+    discountsAmount = discounts[0][1].text
+
+    promosCount = discounts[1][0].text
+    promosAmount = discounts[1][1].text
+
+    manualDiscountsCount = discounts[2][0].text
+    manualDiscountsAmount = discounts[2][1].text
+
+    grossSales = member.find('grossSales').text
+    percentOfSales = member.find('percentOfSales').text
+
+
+    deptInfo.append(periodSeqNum)
+    deptInfo.append(site)
+    deptInfo.append(sysid)
+    deptInfo.append(deptType)
+    deptInfo.append(name)
+    deptInfo.append(netSalesCount)
+    deptInfo.append(netSalesAmount)
+    deptInfo.append(netSalesItemCount)
+    deptInfo.append(netSalesUOM)
+    deptInfo.append(refundsCount)
+    deptInfo.append(refundsAmount)
+    deptInfo.append(discountsCount)
+    deptInfo.append(discountsAmount)
+    deptInfo.append(promosCount)
+    deptInfo.append(promosAmount)
+    deptInfo.append(manualDiscountsCount)
+    deptInfo.append(manualDiscountsAmount)
+    deptInfo.append(grossSales)
+    deptInfo.append(percentOfSales)
+    deptInfo.append(periodIndex)
 
 departmentData.close()
