@@ -1,19 +1,11 @@
+from os import listdir
+from os.path import join
 import xml.etree.ElementTree as ET
 import csv
 
-tree = ET.parse("assets/lastDayClose_department_20200531123345.xml")
-root = tree.getroot()
+departmentPath = 'assets/DepartmentFiles/'
+departmentFilePaths = [join(departmentPath, f) for f in listdir(departmentPath)]
 
-departmentData = open('./parsedDocs/departmentData.csv', 'w')
-
-csvWriter = csv.writer(departmentData)
-
-periodSeqNum = root[0].attrib['periodSeqNum']
-site = root[1].text
-periodIndex = periodSeqNum + "_" + site
-totals = root[3]
-
-headerPresent = False
 totalHeader = [
     "dp_periodSeqNum",
     "dp_site",
@@ -36,64 +28,86 @@ totalHeader = [
     "dp_PercentOfSales",
     "dp_Index"
 ]
-index = 0
-for member in totals.findall('deptInfo'):
-    deptInfo = []
-    if (headerPresent == False):
-        csvWriter.writerow(totalHeader)
-        headerPresent = True
-    deptBase = member[0]
-    sysid = deptBase.attrib['sysid']
-    deptType = deptBase.attrib['deptType']
-    name = deptBase[0].text
 
-    netSales = member.find('netSales')
-    netSalesCount = netSales[0].text
-    netSalesAmount = netSales[1].text
-    netSalesItemCount = netSales[2].text
-    netSalesUOM = netSales[2].attrib['uom'] if 'uom' in netSales[2].attrib else "None"
+for file in departmentFilePaths:
+    tree = ET.parse(file)
+    root = tree.getroot()
 
-    refunds = member.find('refunds')
-    refundsCount = refunds[0].text
-    refundsAmount = refunds[1].text
+    periodSeqNum = root[0].attrib['periodSeqNum']
+    site = root[1].text
+    periodIndex = periodSeqNum + "_" + site
+    periodEndDate = root[0].attrib['periodEndDate']
 
-    discounts = member.find('discounts')
-    discountsCount = discounts[0][0].text
-    discountsAmount = discounts[0][1].text
+    docName = periodSeqNum + "_" + site + "_" + periodEndDate + "_" + "department_totals.csv"
+    departmentData = open('./parsedDocs/'+docName, 'w')
 
-    promosCount = discounts[1][0].text
-    promosAmount = discounts[1][1].text
+    csvWriter = csv.writer(departmentData)
 
-    manualDiscountsCount = discounts[2][0].text
-    manualDiscountsAmount = discounts[2][1].text
+    totals = root[3]
 
-    grossSales = member.find('grossSales').text
-    percentOfSales = member.find('percentOfSales').text
+    headerPresent = False
+    
+    index = 0
+    for member in totals.findall('deptInfo'):
+        deptInfo = []
+        if (headerPresent == False):
+            csvWriter.writerow(totalHeader)
+            headerPresent = True
+        deptBase = member[0]
+        sysid = deptBase.attrib['sysid']
+        deptType = deptBase.attrib['deptType']
+        name = deptBase[0].text
+
+        netSales = member.find('netSales')
+        netSalesCount = netSales[0].text
+        netSalesAmount = netSales[1].text
+        netSalesItemCount = netSales[2].text
+        netSalesUOM = netSales[2].attrib['uom'] if 'uom' in netSales[2].attrib else "None"
+
+        refunds = member.find('refunds')
+        refundsCount = refunds[0].text
+        refundsAmount = refunds[1].text
+
+        discounts = member.find('discounts')
+        discountsCount = discounts[0][0].text
+        discountsAmount = discounts[0][1].text
+
+        promosCount = discounts[1][0].text
+        promosAmount = discounts[1][1].text
+
+        manualDiscountsCount = discounts[2][0].text
+        manualDiscountsAmount = discounts[2][1].text
+
+        grossSales = member.find('grossSales').text
+        percentOfSales = member.find('percentOfSales').text
 
 
-    deptInfo.append(periodSeqNum)
-    deptInfo.append(site)
-    deptInfo.append(sysid)
-    deptInfo.append(deptType)
-    deptInfo.append(name)
-    deptInfo.append(netSalesCount)
-    deptInfo.append(netSalesAmount)
-    deptInfo.append(netSalesItemCount)
-    deptInfo.append(netSalesUOM)
-    deptInfo.append(refundsCount)
-    deptInfo.append(refundsAmount)
-    deptInfo.append(discountsCount)
-    deptInfo.append(discountsAmount)
-    deptInfo.append(promosCount)
-    deptInfo.append(promosAmount)
-    deptInfo.append(manualDiscountsCount)
-    deptInfo.append(manualDiscountsAmount)
-    deptInfo.append(grossSales)
-    deptInfo.append(percentOfSales)
-    deptInfo.append(periodIndex)
+        deptInfo.append(periodSeqNum)
+        deptInfo.append(site)
+        deptInfo.append(sysid)
+        deptInfo.append(deptType)
+        deptInfo.append(name)
+        deptInfo.append(netSalesCount)
+        deptInfo.append(netSalesAmount)
+        deptInfo.append(netSalesItemCount)
+        deptInfo.append(netSalesUOM)
+        deptInfo.append(refundsCount)
+        deptInfo.append(refundsAmount)
+        deptInfo.append(discountsCount)
+        deptInfo.append(discountsAmount)
+        deptInfo.append(promosCount)
+        deptInfo.append(promosAmount)
+        deptInfo.append(manualDiscountsCount)
+        deptInfo.append(manualDiscountsAmount)
+        deptInfo.append(grossSales)
+        deptInfo.append(percentOfSales)
+        deptInfo.append(periodIndex)
 
-    csvWriter.writerow(deptInfo)
-    index += 1
-    print(index)
+        csvWriter.writerow(deptInfo)
+        index += 1
+        print(index)
 
-departmentData.close()
+    departmentData.close()
+    print("Processed " + str(index) + " rows")
+    print("On to the next File!")
+print("Ahh, now I'm done!")
