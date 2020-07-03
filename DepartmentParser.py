@@ -1,10 +1,10 @@
 from os import listdir
-from os.path import join
+from os.path import join, splitext
 import xml.etree.ElementTree as ET
 import csv
 
 departmentPath = 'assets/DepartmentFiles/'
-departmentFilePaths = [join(departmentPath, f) for f in listdir(departmentPath)]
+departmentFilePaths = [join(departmentPath, f) for f in listdir(departmentPath) if splitext(f)[1] == '.xml']
 
 totalHeader = [
     "dp_periodSeqNum",
@@ -39,7 +39,7 @@ for file in departmentFilePaths:
     periodEndDate = root[0].attrib['periodEndDate']
 
     docName = periodSeqNum + "_" + site + "_" + periodEndDate + "_" + "department_totals.csv"
-    departmentData = open('./parsedDocs/'+docName, 'w')
+    departmentData = open('./parsedDocs/Department/'+docName, 'w')
 
     csvWriter = csv.writer(departmentData)
 
