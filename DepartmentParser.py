@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, chdir
 from os.path import join, splitext
 import xml.etree.ElementTree as ET
 import csv
@@ -39,7 +39,8 @@ for file in departmentFilePaths:
     periodEndDate = root[0].attrib['periodEndDate']
 
     docName = periodSeqNum + "_" + site + "_" + periodEndDate + "_" + "department_totals.csv"
-    departmentData = open('./parsedDocs/Department/'+docName, 'w')
+    chdir('parsedDocs/Department/')
+    departmentData = open(docName, 'w')
 
     csvWriter = csv.writer(departmentData)
 
@@ -108,6 +109,7 @@ for file in departmentFilePaths:
         print(index)
 
     departmentData.close()
+    chdir('../..')
     print("Processed " + str(index) + " rows")
     print("On to the next File!")
 print("Ahh, now I'm done!")
