@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, chdir
 from os.path import join, splitext
 import xml.etree.ElementTree as ET
 import csv
@@ -21,7 +21,7 @@ periodHeader = [
 for file in periodFilePaths:
     tree = ET.parse(file)
     root = tree.getroot()
-
+    sysId = root[0].attrib['sysid']
     periodSeqNum = root[0].attrib['periodSeqNum']
     site = root[1].text
     periodIndex = periodSeqNum + "_" + site
@@ -32,11 +32,24 @@ for file in periodFilePaths:
     periodEndDate = periodEnd[0]
     periodEndTime = periodEnd[1].split('-')[0]
 
-    print(periodBeginDate, periodBeginTime, periodTZ)
-    print(periodEndDate, periodEndTime)
-
     docName = periodSeqNum + "_" + site + "_" + periodEndDate + "_" + "period.csv"
-    periodData = open('./parsedDocs/Period/'+docName, 'w')
+    chdir('parsedDocs/Period/')
+    periodData = open(docName, 'w')
 
-    # csvWriter = csv.writer(departmentData)
+    csvWriter = csv.writer(periodData)
+    csvWriter.writerow(periodHeader)
 
+    periodRow = [
+        periodSeqNum, 
+        site, 
+        periodBeginDate,
+        periodEndDate,
+        periodBeginTime,
+        periodEndTime,
+        '-'+periodTZ,
+        periodIndex,
+        sysId
+    ]
+    csvWriter.writerow(periodRow)
+    chdir('../..')
+print("All done, yo!")
