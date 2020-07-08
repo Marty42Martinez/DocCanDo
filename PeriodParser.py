@@ -24,13 +24,14 @@ for file in periodFilePaths:
     sysId = root[0].attrib['sysid']
     periodSeqNum = root[0].attrib['periodSeqNum']
     site = root[1].text
-    periodIndex = periodSeqNum + "_" + site
     periodBegin = root[0].attrib['periodBeginDate'].split('T')
     periodBeginDate = periodBegin[0]
     [periodBeginTime, periodTZ] = periodBegin[1].split('-')
     periodEnd = root[0].attrib['periodEndDate'].split('T')
     periodEndDate = periodEnd[0]
     periodEndTime = periodEnd[1].split('-')[0]
+    periodIndex = periodEndDate + "_" + site
+
 
     docName = periodSeqNum + "_" + site + "_" + periodEndDate + "_" + "period.csv"
     chdir('parsedDocs/Period/')
