@@ -24,8 +24,9 @@ for file in networkFilePaths:
 
     periodSeqNum = root[0].attrib['periodSeqNum']
     site = root[1].text
-    periodIndex = periodSeqNum + "_" + site
-    # periodEndDate = root[0].attrib['periodEndDate']
+    periodEnd = root[0].attrib['periodEndDate'].split('T')
+    periodEndDate = periodEnd[0]
+    periodIndex = periodEndDate + "_" + site
 
     docName = periodSeqNum + "_" + site + "_" + "_" + "network_totals.csv"
     chdir('parsedDocs/Network/')
