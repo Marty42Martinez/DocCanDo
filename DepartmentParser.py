@@ -29,6 +29,15 @@ totalHeader = [
     "dp_Index"
 ]
 
+# docName = periodSeqNum + "_" + site + "_" + "department_totals.csv"
+docName = "departmentTotalsTableAddition.csv"
+chdir('parsedDocs/Department/')
+departmentData = open(docName, 'w')
+csvWriter = csv.writer(departmentData)
+chdir("../..")
+
+headerPresent = False
+
 for file in departmentFilePaths:
     tree = ET.parse(file)
     root = tree.getroot()
@@ -39,15 +48,7 @@ for file in departmentFilePaths:
     periodEndDate = periodEnd[0]
     periodIndex = periodEndDate + "_" + site
 
-    docName = periodSeqNum + "_" + site + "_" + "department_totals.csv"
-    chdir('parsedDocs/Department/')
-    departmentData = open(docName, 'w')
-
-    csvWriter = csv.writer(departmentData)
-
     totals = root[3]
-
-    headerPresent = False
     
     index = 0
     for member in totals.findall('deptInfo'):
@@ -107,10 +108,8 @@ for file in departmentFilePaths:
 
         csvWriter.writerow(deptInfo)
         index += 1
-        print(index)
 
-    departmentData.close()
-    chdir('../..')
     print("Processed " + str(index) + " rows")
     print("On to the next File!")
+departmentData.close()
 print("Ahh, now I'm done!")
