@@ -39,7 +39,7 @@ for file in departmentFilePaths:
     periodEndDate = periodEnd[0]
     periodIndex = periodEndDate + "_" + site
 
-    docName = periodSeqNum + "_" + site + "_" + "_" + "department_totals.csv"
+    docName = periodSeqNum + "_" + site + "_" + "department_totals.csv"
     chdir('parsedDocs/Department/')
     departmentData = open(docName, 'w')
 
