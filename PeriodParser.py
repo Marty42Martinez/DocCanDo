@@ -18,6 +18,13 @@ periodHeader = [
     "pd_SysID"
 ]
 
+# docName = periodSeqNum + "_" + site + "_" + periodEndDate + "_" + "period.csv"
+docName = "periodTableAddition.csv"
+chdir('parsedDocs/Period/')
+periodData = open(docName, 'w')
+csvWriter = csv.writer(periodData)
+csvWriter.writerow(periodHeader)
+chdir('../..')
 for file in periodFilePaths:
     tree = ET.parse(file)
     root = tree.getroot()
@@ -32,14 +39,6 @@ for file in periodFilePaths:
     periodEndTime = periodEnd[1].split('-')[0]
     periodIndex = periodEndDate + "_" + site
 
-
-    docName = periodSeqNum + "_" + site + "_" + periodEndDate + "_" + "period.csv"
-    chdir('parsedDocs/Period/')
-    periodData = open(docName, 'w')
-
-    csvWriter = csv.writer(periodData)
-    csvWriter.writerow(periodHeader)
-
     periodRow = [
         periodSeqNum, 
         site, 
@@ -52,5 +51,4 @@ for file in periodFilePaths:
         sysId
     ]
     csvWriter.writerow(periodRow)
-    chdir('../..')
 print("All done, yo!")

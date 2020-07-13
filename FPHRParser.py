@@ -19,6 +19,15 @@ totalHeader = [
     "fphr_PeriodSeqNum"
 ]
 
+# docName = periodSeqNum + "_" + site + "_" + "FPHR_totals.csv"
+docName = "fphrTotalsTableAddition.csv"
+chdir('parsedDocs/FPHR/')
+fphrData = open(docName, 'w')
+csvWriter = csv.writer(fphrData)
+chdir('../..')
+
+headerPresent = False
+
 for file in fphrFilePaths:
     tree = ET.parse(file)
     root = tree.getroot()
@@ -29,14 +38,7 @@ for file in fphrFilePaths:
     periodEndDate = periodEnd[0]
     periodIndex = periodEndDate + "_" + site
 
-    docName = periodSeqNum + "_" + site + "_" + "FPHR_totals.csv"
-    chdir('parsedDocs/FPHR/')
-    fphrData = open(docName, 'w')
-
-    csvWriter = csv.writer(fphrData)
-
     totals = root[3]
-    headerPresent = False
 
     index = 0
     for member in totals.findall('byFuelProduct'):
@@ -69,8 +71,7 @@ for file in fphrFilePaths:
         ]
         csvWriter.writerow(info)
         index += 1
-    fphrData.close()
-    chdir('../..')
     print("Runnin' through those Hoses: " + str(index) + " rows processed")
     print("Next!")
+fphrData.close()
 print("What'chu waiting for? I'm done!")

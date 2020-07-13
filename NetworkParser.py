@@ -18,6 +18,15 @@ totalHeader = [
     "nt_CardCorrectionsAmount"
 ]
 
+# docName = periodSeqNum + "_" + site + "_" + "_" + "network_totals.csv"
+docName = "networkTotalsTableAddition.csv"
+chdir('parsedDocs/Network/')
+networkData = open(docName, 'w')
+
+csvWriter = csv.writer(networkData)
+chdir('../..')
+
+headerPresent = False
 for file in networkFilePaths:
     tree = ET.parse(file)
     root = tree.getroot()
@@ -28,15 +37,7 @@ for file in networkFilePaths:
     periodEndDate = periodEnd[0]
     periodIndex = periodEndDate + "_" + site
 
-    docName = periodSeqNum + "_" + site + "_" + "_" + "network_totals.csv"
-    chdir('parsedDocs/Network/')
-    networkData = open(docName, 'w')
-
-    csvWriter = csv.writer(networkData)
-
     totals = root[3]
-
-    headerPresent = False
     
     index = 0
     for member in totals.findall('cardInfo'):
@@ -70,8 +71,7 @@ for file in networkFilePaths:
         csvWriter.writerow(networkInfo)
         index += 1
 
-    networkData.close()
-    chdir('../..')
     print("Cha'ching! " + str(index) + " rows processed")
     print("On to the next File!")
+networkData.close()
 print("Ahh, now I'm done!")
